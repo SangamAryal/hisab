@@ -15,4 +15,8 @@ actual fun rememberShareText(): (String) -> Unit = remember {
     }
 }
 
-actual fun deviceCurrencyCode(): String? = platform.Foundation.NSLocale.currentLocale.currencyCode
+/** A currency formatter uses the phone's current locale, so its code is the local currency. */
+actual fun deviceCurrencyCode(): String? =
+    platform.Foundation.NSNumberFormatter().apply {
+        numberStyle = platform.Foundation.NSNumberFormatterCurrencyStyle
+    }.currencyCode
