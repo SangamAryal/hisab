@@ -8,6 +8,7 @@ User=hisab
 Group=hisab
 WorkingDirectory=/opt/hisab/repo/backend
 ExecStart=/opt/hisab/repo/backend/pocketbase serve --http=127.0.0.1:8090 --dir=/opt/hisab/data --hooksDir=/opt/hisab/repo/backend/pb_hooks --migrationsDir=/opt/hisab/repo/backend/pb_migrations --hooksWatch=false
+Environment=HISAB_TRUSTED_PROXY_HEADER=X-Real-IP
 Restart=always
 RestartSec=5
 LimitNOFILE=4096
