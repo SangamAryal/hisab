@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # One-time server setup for Hisab on a fresh Ubuntu VM (Oracle Cloud Always Free,
-# Google Cloud e2-micro, or any VPS). Run as a user with sudo:
+# Google Cloud e2-micro, or any VPS; "Minimal" images work too). Run as a user with sudo:
 #
 #   curl -fsSL https://raw.githubusercontent.com/SangamAryal/hisab/main/deploy/setup.sh | bash -s -- api.example.com
 #
@@ -11,7 +11,7 @@ DOMAIN="${1:?usage: setup.sh <domain>}"
 REPO="${HISAB_REPO:-https://github.com/SangamAryal/hisab.git}"
 
 sudo apt-get update -y
-sudo apt-get install -y git unzip curl debian-keyring debian-archive-keyring apt-transport-https
+sudo apt-get install -y git unzip curl gnupg debian-keyring debian-archive-keyring apt-transport-https
 
 # Caddy: HTTPS reverse proxy with automatic Let's Encrypt certificates.
 if ! command -v caddy >/dev/null; then
@@ -45,5 +45,5 @@ fi
 
 echo
 echo "Done. Create the admin account with:"
-echo "  sudo -u hisab /opt/hisab/repo/backend/pocketbase superuser upsert you@example.com 'a-long-password' --dir=/opt/hisab/data"
+echo "  sudo /opt/hisab/repo/backend/pocketbase superuser upsert you@example.com 'a-long-password' --dir=/opt/hisab/data && sudo chown -R hisab:hisab /opt/hisab/data && sudo systemctl restart hisab"
 echo "Then open https://$DOMAIN/_/ and build the app with -Phisab.apiUrl=https://$DOMAIN"

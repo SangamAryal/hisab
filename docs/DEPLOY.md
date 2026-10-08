@@ -59,7 +59,8 @@ SSH into the server and run:
 
 ```bash
 curl -fsSL https://raw.githubusercontent.com/SangamAryal/hisab/main/deploy/setup.sh | bash -s -- 140-238-1-2.sslip.io
-sudo -u hisab /opt/hisab/repo/backend/pocketbase superuser upsert you@example.com 'a-long-password' --dir=/opt/hisab/data
+sudo /opt/hisab/repo/backend/pocketbase superuser upsert you@example.com 'a-long-password' --dir=/opt/hisab/data
+sudo chown -R hisab:hisab /opt/hisab/data && sudo systemctl restart hisab
 ```
 
 Open `https://140-238-1-2.sslip.io/_/` to see the admin dashboard.
