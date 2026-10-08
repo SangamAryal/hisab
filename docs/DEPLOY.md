@@ -1,0 +1,65 @@
+# Running the Hisab server for free
+
+The whole backend is one PocketBase process with a SQLite file, so a tiny
+free VM is plenty for thousands of users.
+
+## 1. Get a free server
+
+**Oracle Cloud Always Free** (recommended): an Ampere (ARM) VM with up to
+2 OCPU / 12 GB RAM and 200 GB disk, free forever. Sign-up asks for a card
+to verify you; Always Free resources are never charged.
+
+1. Sign up at https://www.oracle.com/cloud/free/ and pick a home region close
+   to your users (e.g. Mumbai or Hyderabad for Nepal/India).
+2. Compute → Instances → Create: image **Ubuntu 24.04**, shape
+   **VM.Standard.A1.Flex** with 1 OCPU / 6 GB (well within the free limit).
+   Add your SSH key.
+3. In the instance's subnet → Security List, add ingress rules for TCP **80**
+   and **443** from `0.0.0.0/0`.
+
+Fallback: Google Cloud's free **e2-micro** in us-west1/us-central1/us-east1
+(also card-verified, also free).
+
+## 2. Give it a name
+
+The app needs HTTPS, which needs a domain name. Free options:
+
+- **sslip.io**: if your server's IP is `140.238.1.2`, use
+  `140-238-1-2.sslip.io`. Nothing to register.
+- A free subdomain from DuckDNS, or a real domain later (~$10/year).
+
+## 3. Install
+
+SSH into the server and run:
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/SangamAryal/hisab/main/deploy/setup.sh | bash -s -- 140-238-1-2.sslip.io
+sudo -u hisab /opt/hisab/repo/backend/pocketbase superuser upsert you@example.com 'a-long-password' --dir=/opt/hisab/data
+```
+
+Open `https://140-238-1-2.sslip.io/_/` to see the admin dashboard.
+
+## 4. Point the app at it
+
+Build with `-Phisab.apiUrl=https://140-238-1-2.sslip.io`, or set it once in
+`gradle.properties`. In GitHub, set the repository variable
+`HISAB_API_URL` so CI builds use it too.
+
+## Updating
+
+```bash
+cd /opt/hisab/repo && git pull && sudo systemctl restart hisab
+```
+
+Migrations run automatically on start.
+
+## Backups
+
+PocketBase has built-in backups: Dashboard → Settings → Backups. Turn on a
+daily schedule, and point it at free S3-compatible storage (Cloudflare R2
+gives 10 GB free) so a dead VM can't take the data with it.
+
+## Email (optional)
+
+Not needed for v0.1, which has no email sign-in. When it's added, put any
+free SMTP (Brevo, Resend) in Dashboard → Settings → Mail settings.

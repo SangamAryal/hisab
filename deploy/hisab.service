@@ -1,0 +1,21 @@
+[Unit]
+Description=Hisab backend (PocketBase)
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+User=hisab
+Group=hisab
+WorkingDirectory=/opt/hisab/repo/backend
+ExecStart=/opt/hisab/repo/backend/pocketbase serve --http=127.0.0.1:8090 --dir=/opt/hisab/data --hooksDir=/opt/hisab/repo/backend/pb_hooks --migrationsDir=/opt/hisab/repo/backend/pb_migrations --hooksWatch=false
+Restart=always
+RestartSec=5
+LimitNOFILE=4096
+NoNewPrivileges=true
+ProtectSystem=strict
+ReadWritePaths=/opt/hisab/data
+ProtectHome=true
+PrivateTmp=true
+
+[Install]
+WantedBy=multi-user.target
