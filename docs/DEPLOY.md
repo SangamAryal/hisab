@@ -3,6 +3,31 @@
 The whole backend is one PocketBase process with a SQLite file, so a tiny
 free VM is plenty for thousands of users.
 
+## Quickest: Railway (no card, about 10 minutes)
+
+Railway builds the server straight from this GitHub repo and gives it an
+HTTPS address, so there's no VM, domain or SSH. The free plan needs no card:
+new accounts get $5 of credit for the first 30 days, then $1 a month.
+Hisab's server is small (about 30 MB of memory) and should fit in that, but
+if a month's credit runs out the server pauses until the next month, so move
+to a free VM (below) before real users depend on it.
+
+1. Go to https://railway.com and sign in with GitHub.
+2. **New Project → Deploy from GitHub repo → SangamAryal/hisab.** Railway
+   reads `railway.json` and builds `backend/Dockerfile` on its own.
+3. Open the new service. Right-click it (or use the command palette) →
+   **Add Volume**, mount path **`/pb_data`**. Without this, every redeploy
+   wipes the data.
+4. **Variables**: add `HISAB_ADMIN_EMAIL` and `HISAB_ADMIN_PASSWORD` (10+
+   characters) for the admin dashboard.
+5. **Settings → Networking → Generate Domain.** You get an address like
+   `hisab-production-1234.up.railway.app`.
+6. Open `https://<that address>/api/health`. It should say "API is
+   healthy". The dashboard is at `https://<that address>/_/`.
+
+Then do step 4 below ("Point the app at it") with that address. Each push to
+`main` redeploys it automatically.
+
 ## 1. Get a free server
 
 **Oracle Cloud Always Free** (recommended): an Ampere (ARM) VM with up to

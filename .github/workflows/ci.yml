@@ -25,6 +25,25 @@ jobs:
       - run: ./get-pocketbase.sh
       - run: npm test
 
+  docker:
+    name: Backend container (Railway build)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build the image Railway builds
+        run: docker build -f backend/Dockerfile -t hisab-backend .
+      - name: Start it and check the API answers
+        run: |
+          docker run -d --name hisab -e PORT=9000 -p 9000:9000 \
+            -e HISAB_ADMIN_EMAIL=ci@example.com -e HISAB_ADMIN_PASSWORD=ci-password-123 hisab-backend
+          for i in $(seq 1 20); do curl -fs localhost:9000/api/health && break; sleep 1; done
+          curl -fs localhost:9000/api/health
+          test "$(curl -s -o /dev/null -w '%{http_code}' localhost:9000/api/hisab/invite/nope)" = 404
+          curl -fs -X POST localhost:9000/api/collections/_superusers/auth-with-password \
+            -H 'content-type: application/json' -d '{"identity":"ci@example.com","password":"ci-password-123"}' >/dev/null
+      - if: failure()
+        run: docker logs hisab
+
   android:
     name: Android (tests + APK)
     runs-on: ubuntu-latest

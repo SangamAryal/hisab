@@ -1,0 +1,4 @@
+*
+!backend/pb_hooks
+!backend/pb_migrations
+!backend/docker-start.sh
