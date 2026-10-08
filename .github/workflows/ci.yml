@@ -61,6 +61,14 @@ jobs:
           name: hisab-debug-apk
           path: composeApp/build/outputs/apk/debug/*.apk
           if-no-files-found: error
+      - name: Upload APK to Google Drive (replaces the previous one)
+        if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
+        env:
+          GDRIVE_CLIENT_ID: ${{ secrets.GDRIVE_CLIENT_ID }}
+          GDRIVE_CLIENT_SECRET: ${{ secrets.GDRIVE_CLIENT_SECRET }}
+          GDRIVE_REFRESH_TOKEN: ${{ secrets.GDRIVE_REFRESH_TOKEN }}
+          GDRIVE_FOLDER_ID: ${{ vars.GDRIVE_FOLDER_ID || '1HKxoO0B9-U86aX7_eOcLBE8Ajsygkb94' }}
+        run: .github/scripts/upload-apk-to-drive.sh composeApp/build/outputs/apk/debug/composeApp-debug.apk
 
   ios:
     name: iOS (tests + simulator build)

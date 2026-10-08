@@ -32,6 +32,8 @@ Tests: `./gradlew :composeApp:testDebugUnitTest` (shared logic) and
 
 Releasing: [docs/RELEASE.md](docs/RELEASE.md).
 
+Latest Android APK in Google Drive: [docs/APK-TO-DRIVE.md](docs/APK-TO-DRIVE.md).
+
 ## License
 
 MIT
