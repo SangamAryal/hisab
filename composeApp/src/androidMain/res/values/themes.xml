@@ -1,0 +1,8 @@
+<resources>
+    <style name="Theme.Hisab" parent="android:Theme.Material.Light.NoActionBar">
+        <item name="android:windowBackground">@color/splash_background</item>
+        <item name="android:statusBarColor">@android:color/transparent</item>
+    </style>
+    <color name="splash_background">#FFF7F5EF</color>
+    <color name="ic_launcher_background">#FF0F766E</color>
+</resources>
