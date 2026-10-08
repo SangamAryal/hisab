@@ -45,5 +45,5 @@ fi
 
 echo
 echo "Done. Create the admin account with:"
-echo "  sudo -u hisab /opt/hisab/repo/backend/pocketbase superuser upsert you@example.com 'a-long-password' --dir=/opt/hisab/data"
+echo "  sudo /opt/hisab/repo/backend/pocketbase superuser upsert you@example.com 'a-long-password' --dir=/opt/hisab/data && sudo chown -R hisab:hisab /opt/hisab/data && sudo systemctl restart hisab"
 echo "Then open https://$DOMAIN/_/ and build the app with -Phisab.apiUrl=https://$DOMAIN"
