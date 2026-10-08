@@ -42,7 +42,7 @@ val LocalRepository = compositionLocalOf<Repository> { error("No repository") }
 
 /** A message a person can act on, for any error. */
 fun Throwable.friendly(): String = when (this) {
-    is OfflineException -> "You're offline. Check your internet and try again."
+    is OfflineException -> "Can't reach the Hisab server. Check your internet; if it's working, the server may be down. Try again in a bit."
     is ApiException -> message ?: "Something went wrong"
     is IllegalArgumentException -> message ?: "Please check what you entered"
     else -> "Something went wrong. Please try again."
@@ -81,8 +81,8 @@ fun ErrorState(message: String, onRetry: () -> Unit) {
 fun OfflineBanner(pending: Int) {
     Surface(color = MaterialTheme.colorScheme.secondaryContainer, modifier = Modifier.fillMaxWidth()) {
         Text(
-            if (pending > 0) "Offline. $pending change${if (pending == 1) "" else "s"} will sync when you're back online."
-            else "Offline. Showing what was saved on this phone.",
+            if (pending > 0) "Can't reach the server. $pending change${if (pending == 1) "" else "s"} will sync when it's back."
+            else "Can't reach the server. Showing what was saved on this phone.",
             modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
             style = MaterialTheme.typography.bodySmall,
             color = MaterialTheme.colorScheme.onSecondaryContainer,
