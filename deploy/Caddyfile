@@ -1,0 +1,7 @@
+{{DOMAIN}} {
+	encode gzip
+	reverse_proxy 127.0.0.1:8090 {
+		# PocketBase rate limits by client IP
+		header_up X-Real-IP {remote_host}
+	}
+}

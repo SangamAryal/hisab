@@ -1,0 +1,66 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  backend:
+    name: Backend (PocketBase API tests)
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: backend
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - run: ./get-pocketbase.sh
+      - run: npm test
+
+  android:
+    name: Android (tests + APK)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 17
+      - uses: gradle/actions/setup-gradle@v4
+      - name: Unit tests and debug APK
+        run: ./gradlew :composeApp:testDebugUnitTest :composeApp:assembleDebug -Phisab.apiUrl=${{ vars.HISAB_API_URL }}
+      - uses: actions/upload-artifact@v4
+        with:
+          name: hisab-debug-apk
+          path: composeApp/build/outputs/apk/debug/*.apk
+          if-no-files-found: error
+
+  ios:
+    name: iOS (tests + simulator build)
+    runs-on: macos-15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 17
+      - uses: gradle/actions/setup-gradle@v4
+      - name: Shared tests on the iOS simulator
+        run: ./gradlew :composeApp:iosSimulatorArm64Test
+      - name: Generate Xcode project
+        run: |
+          command -v xcodegen >/dev/null || brew install xcodegen
+          cd iosApp && xcodegen
+      - name: Build app for the simulator
+        run: |
+          cd iosApp
+          xcodebuild -project iosApp.xcodeproj -target iosApp -configuration Debug \
+            -sdk iphonesimulator -arch arm64 CODE_SIGNING_ALLOWED=NO build

@@ -216,3 +216,18 @@ routerAdd("POST", "/api/hisab/admin/run-recurring", (e) => {
   const lib = require(`${__hooks}/hisab_lib.js`)
   return e.json(200, { created: lib.runRecurring($app) })
 }, $apis.requireSuperuserAuth())
+
+// Behind a reverse proxy (deploy/Caddyfile), every request comes from
+// 127.0.0.1, so the rate limiter would treat all users as one. When
+// HISAB_TRUSTED_PROXY_HEADER is set (deploy/hisab.service sets X-Real-IP),
+// trust that header for the client IP. Leave it unset when PocketBase is
+// reachable directly, or clients could fake their IP.
+onBootstrap((e) => {
+  e.next()
+  const header = $os.getenv("HISAB_TRUSTED_PROXY_HEADER")
+  if (!header) return
+  const settings = e.app.settings()
+  if (settings.trustedProxy.headers.length === 1 && settings.trustedProxy.headers[0] === header) return
+  settings.trustedProxy.headers = [header]
+  e.app.save(settings)
+})
