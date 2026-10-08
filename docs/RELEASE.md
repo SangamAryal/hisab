@@ -17,5 +17,5 @@ they install for testing, but Play will reject them.
 
 1. `brew install xcodegen && cd iosApp && xcodegen && open iosApp.xcodeproj`
 2. In the target's Signing & Capabilities, pick your team. Bundle id: `app.hisab`.
-3. Set `hisab.apiUrl` in `gradle.properties` to your server.
+3. `hisab.apiUrl` in `gradle.properties` already points at the public server; change it if you run your own.
 4. Product → Archive, then upload to App Store Connect / TestFlight.
