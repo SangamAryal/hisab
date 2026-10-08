@@ -1,0 +1,25 @@
+# PocketBase
+backend/pocketbase
+backend/pb_data/
+backend/*.zip
+
+# Kotlin / Gradle / IDE
+.gradle/
+build/
+.kotlin/
+local.properties
+*.iml
+.idea/
+.DS_Store
+captures/
+.externalNativeBuild/
+.cxx/
+xcuserdata/
+*.xcworkspace/xcuserdata/
+iosApp/Pods/
+
+# Secrets
+*.jks
+*.keystore
+keystore.properties
+.env
